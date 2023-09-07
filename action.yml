@@ -1,5 +1,8 @@
 name: Delivery Environment Name
 description: Infer an environment name from a given input.
+branding:
+  icon: bookmark
+  color: blue
 inputs:
   branch:
     description: Branch from which to infer the environment name
