@@ -1,0 +1,28 @@
+name: Delivery Environment Name
+description: Infer an environment name from a given input.
+inputs:
+  branch:
+    description: Branch from which to infer the environment name
+    required: true
+outputs:
+  name:
+    description: The inferred name of the environment
+    value: ${{ steps.slug.outputs.slug }}
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        if [[ -z "${BRANCH}" ]]; then
+            echo "Missing branch input"
+            exit 1
+        fi
+      env:
+        BRANCH: ${{ inputs.branch }}
+    - id: slug
+      shell: bash
+      run: |
+        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9_]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]')
+        echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
+      env:
+        BRANCH: ${{ inputs.branch }}
