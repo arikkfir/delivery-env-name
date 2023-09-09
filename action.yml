@@ -25,7 +25,7 @@ runs:
     - id: slug
       shell: bash
       run: |
-        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]' | cut -c1-58)
+        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]' | cut -c1-59)
         while [[ "${SLUG: -1}" == "-" ]]; do
             SLUG="${SLUG%-}"
         done
