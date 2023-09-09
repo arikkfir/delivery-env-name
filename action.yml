@@ -25,7 +25,10 @@ runs:
     - id: slug
       shell: bash
       run: |
-        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]' | cut -c1-59)
+        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]' | cut -c1-58)
+        while [[ "${SLUG: -1}" == "-" ]]; do
+            SLUG="${SLUG%-}"
+        done
         echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
       env:
         BRANCH: ${{ inputs.branch }}
