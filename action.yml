@@ -25,10 +25,31 @@ runs:
     - id: slug
       shell: bash
       run: |
-        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]' | cut -c1-59)
+        # Slug the branch name
+        SLUG=$(echo -n "${BRANCH}" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-|-$//g' | tr '[:upper:]' '[:lower:]')
+        
+        # Remove any leading dashes (start with a character)
+        while [[ "${SLUG:0:1}" == "-" ]]; do
+            SLUG="${SLUG:1}"
+        done
+
+        # Remove any trailing dashes (end with a character)
         while [[ "${SLUG: -1}" == "-" ]]; do
             SLUG="${SLUG%-}"
         done
+        
+        # If slug is empty, replace value with a random string
+        if [[ -z "${SLUG}" ]]; then
+          SLUG="empty-name-$(echo -n $RANDOM | base64 | head -c 20 | sed -E 's/[^a-zA-Z0-9]+/-/g')"
+        fi
+        
+        # If slug is longer than 30 character, take the first 20 and last 10 characters
+        if ((${#SLUG} > 30)); then
+          PREFIX="${SLUG:0:20}"
+          SUFFIX="${SLUG: -10}"
+          SLUG="${PREFIX}-${SUFFIX}"
+        fi
+        
         echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
       env:
         BRANCH: ${{ inputs.branch }}
